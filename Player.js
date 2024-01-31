@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import { View, Text, TouchableOpacity } from 'react-native';
-import song from "./assets/sample.mp3"
 
 const Player = () => {
   const [sound, setSound] = useState();
@@ -13,11 +12,15 @@ const Player = () => {
   }, [sound]);
 
   const playSound = async () => {
-    const { sound } = await Audio.Sound.createAsync(
-      require('./assets/sample.mp3')
-    );
-    setSound(sound);
-    await sound.playAsync();
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        require('./assets/sample.mp3')
+      );
+      setSound(sound);
+      await sound.playAsync();
+    } catch (error) {
+      console.error("Error loading or playing sound", error);
+    }
   };
 
   return (
