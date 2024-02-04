@@ -8,6 +8,7 @@ const Player = () => {
   const [isLoading, setLoading] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
   const [location, setLocation] = useState(null);
+  const [currentSong, setCurrentSong] = useState('');
 
   useEffect(() => {
     getLocationAsync();
@@ -57,6 +58,7 @@ const Player = () => {
       setSound(sound);
       await sound.playAsync();
       setPlaying(true);
+      setCurrentSong('Sample Song'); // Set the name of the currently playing song
       getLocalPopularSongs();
     } catch (error) {
       console.error("Error loading or playing sound", error);
@@ -75,12 +77,14 @@ const Player = () => {
     if (sound) {
       await sound.stopAsync();
       setPlaying(false);
+      setCurrentSong(''); // Clear the current song when stopped
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Music Player</Text>
+      <Text style={styles.songText}>{currentSong}</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={isLoading ? null : isPlaying ? pauseSound : playSound}
@@ -113,8 +117,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#3498db',
-    padding: 15,
+    backgroundColor: '#39948b',
+    padding: 12,
     marginVertical: 10,
     borderRadius: 8,
   },
