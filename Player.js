@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
 
 const Player = () => {
@@ -57,7 +57,7 @@ const Player = () => {
       setSound(sound);
       await sound.playAsync();
       setPlaying(true);
-      getLocalPopularSongs(); // Call this function when the user starts playing a song
+      getLocalPopularSongs();
     } catch (error) {
       console.error("Error loading or playing sound", error);
       setLoading(false);
@@ -79,22 +79,50 @@ const Player = () => {
   };
 
   return (
-    <View>
-      <Text>Music Player</Text>
-      <TouchableOpacity onPress={isLoading ? null : isPlaying ? pauseSound : playSound}>
+    <View style={styles.container}>
+      <Text style={styles.title}>Music Player</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={isLoading ? null : isPlaying ? pauseSound : playSound}
+      >
         {isLoading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#fff" />
         ) : (
-          <Text>{isPlaying ? 'Pause' : 'Play Music'}</Text>
+          <Text style={styles.buttonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
         )}
       </TouchableOpacity>
       {isPlaying && (
-        <TouchableOpacity onPress={stopSound}>
-          <Text>Stop</Text>
+        <TouchableOpacity style={styles.button} onPress={stopSound}>
+          <Text style={styles.buttonText}>Stop</Text>
         </TouchableOpacity>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ecf0f1',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: '#3498db',
+    padding: 15,
+    marginVertical: 10,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default Player;
