@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
+import axios from 'axios';
 
 const Player = () => {
   const [sound, setSound] = useState(null);
@@ -35,19 +36,50 @@ const Player = () => {
   };
 
   const getLocalPopularSongs = async () => {
-    // Implement your logic to fetch local popular songs based on location
-    // This could involve making an API call to a service that provides local music recommendations
-    // For simplicity, let's assume a hypothetical function that fetches local popular songs
+
+    
+const options = {
+  method: 'GET',
+  url: 'https://spotify23.p.rapidapi.com/tracks/',
+  params: {
+    ids: '4WNcduiCmDNfmTEz7JvmLv'
+  },
+  headers: {
+    'X-RapidAPI-Key': '8ccf971f26msh88e648e1f8bbc84p18514djsn69d575c9d5e4',
+    'X-RapidAPI-Host': 'spotify23.p.rapidapi.com'
+  }
+};
+    
     try {
       setLoading(true);
-      // Replace the following line with your actual API call
-      const localPopularSongs = await fetchLocalPopularSongs(location.latitude, location.longitude);
-      console.log('Local Popular Songs:', localPopularSongs);
+      const localPopularSongs = await axios.request(options);
+      console.log('Local Popular Songs:', localPopularSongs.data);
     } catch (error) {
       console.error('Error fetching local popular songs', error);
       setLoading(false);
     }
   };
+
+
+  // const getLocalPopularSongs = async () => {
+  //   const options = {
+  //     method: 'GET',
+  //     url: 'https://deezerdevs-deezer.p.rapidapi.com/infos',
+  //     headers: {
+  //       'X-RapidAPI-Key': '8ccf971f26msh88e648e1f8bbc84p18514djsn69d575c9d5e4',
+  //       'X-RapidAPI-Host': 'deezerdevs-deezer.p.rapidapi.com'
+  //     }
+  //   };
+    
+  //   try {
+  //     setLoading(true);
+  //     const localPopularSongs = await fetchLocalPopularSongs(location.latitude, location.longitude);
+  //     console.log('Local Popular Songs:', localPopularSongs);
+  //   } catch (error) {
+  //     console.error('Error fetching local popular songs', error);
+  //     setLoading(false);
+  //   }
+  // };
 
   const playSound = async () => {
     try {
