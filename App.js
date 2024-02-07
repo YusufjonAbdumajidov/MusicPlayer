@@ -28,6 +28,8 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 20,
     marginTop: 40,
+    position: 'absolute',
+    top: 0,
   },
   headerText: {
     color: '#fff',
