@@ -8,8 +8,8 @@ const Player = () => {
   const [sound, setSound] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
-  const [location, setLocation] = useState(null);
   const [currentSong, setCurrentSong] = useState('');
+  const [countryCode, setCountryCode] = useState(null);
 
   useEffect(() => {
     getLocationAsync();
@@ -24,62 +24,53 @@ const Player = () => {
   const getLocationAsync = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === 'granted') {
-        const location = await Location.getCurrentPositionAsync({});
-        setLocation(location.coords);
-      } else {
+      if (status !== 'granted') {
         console.error('Location permission denied');
+        return;
       }
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      const country = await getCountryCodeAsync(latitude, longitude);
+      setCountryCode(country);
     } catch (error) {
       console.error('Error getting location', error);
     }
   };
 
-  const getLocalPopularSongs = async () => {
+  const getCountryCodeAsync = async (latitude, longitude) => {
+    try {
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+      );
+      const data = await response.json();
+      return data.countryCode;
+    } catch (error) {
+      console.error('Error getting country code', error);
+      throw error;
+    }
+  };
 
-    
-const options = {
-  method: 'GET',
-  url: 'https://spotify23.p.rapidapi.com/tracks/',
-  params: {
-    ids: '4WNcduiCmDNfmTEz7JvmLv'
-  },
-  headers: {
-    'X-RapidAPI-Key': '8ccf971f26msh88e648e1f8bbc84p18514djsn69d575c9d5e4',
-    'X-RapidAPI-Host': 'spotify23.p.rapidapi.com'
-  }
-};
+  const getLocalPopularSongs = async (countryCode) => {
+    const options = {
+      method: 'GET',
+      url: 'https://radio-world-50-000-radios-stations.p.rapidapi.com/v1/radios/getTopByCountry',
+      params: {query: countryCode},
+      headers: {
+        'X-RapidAPI-Key': '8ccf971f26msh88e648e1f8bbc84p18514djsn69d575c9d5e4',
+        'X-RapidAPI-Host': 'radio-world-50-000-radios-stations.p.rapidapi.com'
+      }
+    };
     
     try {
-      setLoading(true);
-      const localPopularSongs = await axios.request(options);
-      console.log('Local Popular Songs:', localPopularSongs.data);
+      const response = await axios.request(options);
+      console.log(response.data);
     } catch (error) {
-      console.error('Error fetching local popular songs', error);
-      setLoading(false);
+      console.error(error);
     }
   };
 
 
-  // const getLocalPopularSongs = async () => {
-  //   const options = {
-  //     method: 'GET',
-  //     url: 'https://deezerdevs-deezer.p.rapidapi.com/infos',
-  //     headers: {
-  //       'X-RapidAPI-Key': '8ccf971f26msh88e648e1f8bbc84p18514djsn69d575c9d5e4',
-  //       'X-RapidAPI-Host': 'deezerdevs-deezer.p.rapidapi.com'
-  //     }
-  //   };
-    
-  //   try {
-  //     setLoading(true);
-  //     const localPopularSongs = await fetchLocalPopularSongs(location.latitude, location.longitude);
-  //     console.log('Local Popular Songs:', localPopularSongs);
-  //   } catch (error) {
-  //     console.error('Error fetching local popular songs', error);
-  //     setLoading(false);
-  //   }
-  // };
+  
 
   const playSound = async () => {
     try {
@@ -90,8 +81,10 @@ const options = {
       setSound(sound);
       await sound.playAsync();
       setPlaying(true);
-      setCurrentSong('Sample Song'); // Set the name of the currently playing song
-      getLocalPopularSongs();
+      const countryCode = 'fr'; // You can replace this with actual country code based on user's location
+      const localPopularSongs = await getLocalPopularSongs(countryCode);
+      console.log('Local Popular Songs:', localPopularSongs);
+      setCurrentSong('Sample Song');
     } catch (error) {
       console.error("Error loading or playing sound", error);
       setLoading(false);
@@ -109,13 +102,14 @@ const options = {
     if (sound) {
       await sound.stopAsync();
       setPlaying(false);
-      setCurrentSong(''); // Clear the current song when stopped
+      //setCurrentSong(''); // Clear the current song when stopped
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Music Player</Text>
+      {/* <Text style={styles.title}>Music Player</Text> */}
+      <View style={styles.songContainer}>
       <Text style={styles.songText}>{currentSong}</Text>
       <TouchableOpacity
         style={styles.button}
@@ -132,6 +126,7 @@ const options = {
           <Text style={styles.buttonText}>Stop</Text>
         </TouchableOpacity>
       )}
+      </View>
     </View>
   );
 };
@@ -139,9 +134,12 @@ const options = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ecf0f1',
+    // backgroundColor: '#ecf0f1',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  songContainer: {
+    display: "flex",
   },
   title: {
     fontSize: 24,
