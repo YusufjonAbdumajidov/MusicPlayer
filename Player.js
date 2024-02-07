@@ -10,6 +10,7 @@ const Player = () => {
   const [isPlaying, setPlaying] = useState(false);
   const [countryCode, setCountryCode] = useState(null);
   const [currentSong, setCurrentSong] = useState('');
+  const [ songs, setSongs ] = useState(null);
 
   useEffect(() => {
     getLocationAsync();
@@ -65,7 +66,8 @@ const Player = () => {
     };
     
     try {
-      const response = await axios.request(options);
+      const response = await Axios.request(options);
+      setSongs(response.data)
       console.log(response.data);
     } catch (error) {
       console.error(error);
@@ -110,31 +112,32 @@ const Player = () => {
   };
 
   return <>
-  <View style={styles.container}>
-      <View style={styles.leftContent}>
-        <TouchableOpacity
-          style={styles.playButton}
-          onPress={isLoading ? null : isPlaying ? pauseSound : playSound}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="large" color="#fff" />
-          ) : (
-            <Text style={styles.playButtonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-      <View style={styles.rightContent}>
-        <Text style={styles.title}>Now Playing</Text>
-        <Text style={styles.songText}>{currentSong || 'No song playing'}</Text>
-        {isPlaying && (
-          <TouchableOpacity style={styles.stopButton} onPress={stopSound}>
-            <Text style={styles.stopButtonText}>Stop</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
+ 
 
-    <View style={styles.container}>
+    { songs  === null ?
+      <View style={styles.container}>
+      <View style={styles.leftContent}>
+        <TouchableOpacity
+          style={styles.playButton}
+          onPress={isLoading ? null : isPlaying ? pauseSound : playSound}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#fff" />
+          ) : (
+            <Text style={styles.playButtonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+      <View style={styles.rightContent}>
+        <Text style={styles.title}>Now Playing</Text>
+        <Text style={styles.songText}>{currentSong || 'No song playing'}</Text>
+        {isPlaying && (
+          <TouchableOpacity style={styles.stopButton} onPress={stopSound}>
+            <Text style={styles.stopButtonText}>Stop</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View> : <View style={styles.container}>
       <View style={styles.leftContent}>
         <TouchableOpacity
           style={styles.playButton}
@@ -157,54 +160,9 @@ const Player = () => {
         )}
       </View>
     </View>
+    }
 
-    <View style={styles.container}>
-      <View style={styles.leftContent}>
-        <TouchableOpacity
-          style={styles.playButton}
-          onPress={isLoading ? null : isPlaying ? pauseSound : playSound}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="large" color="#fff" />
-          ) : (
-            <Text style={styles.playButtonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-      <View style={styles.rightContent}>
-        <Text style={styles.title}>Now Playing</Text>
-        <Text style={styles.songText}>{currentSong || 'No song playing'}</Text>
-        {isPlaying && (
-          <TouchableOpacity style={styles.stopButton} onPress={stopSound}>
-            <Text style={styles.stopButtonText}>Stop</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-
-    <View style={styles.container}>
-      <View style={styles.leftContent}>
-        <TouchableOpacity
-          style={styles.playButton}
-          onPress={isLoading ? null : isPlaying ? pauseSound : playSound}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="large" color="#fff" />
-          ) : (
-            <Text style={styles.playButtonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-      <View style={styles.rightContent}>
-        <Text style={styles.title}>Now Playing</Text>
-        <Text style={styles.songText}>{currentSong || 'No song playing'}</Text>
-        {isPlaying && (
-          <TouchableOpacity style={styles.stopButton} onPress={stopSound}>
-            <Text style={styles.stopButtonText}>Stop</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
+    
     </>;
 };
 
