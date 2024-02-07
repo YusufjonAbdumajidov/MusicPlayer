@@ -1,23 +1,3 @@
-// import { StatusBar } from 'expo-status-bar';
-// import { StyleSheet, Text, View } from 'react-native';
-
-// export default function App() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Open up App.js to start working on your app!</Text>
-//       <StatusBar style="auto" />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Player from './Player';
@@ -26,7 +6,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>My Music Player App</Text>
+        <Text style={styles.headerText}>MP</Text>
       </View>
       <Player />
     </View>
@@ -42,11 +22,12 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    backgroundColor: '#3498db',
+    backgroundColor: '#3EC05C',
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
     marginBottom: 20,
+    marginTop: 40,
   },
   headerText: {
     color: '#fff',
